@@ -13,71 +13,18 @@
 </head>
 
 <?php
-	$mysql_db = "uwwiscus_sbbrg";
-	$mysql_user = "uwwiscus_sbbrg";
-	$mysql_pass = "sbbrg#@!";
-	$dbconn = mysql_connect("localhost", $mysql_user, $mysql_pass);
-	mysql_select_db($mysql_db, $dbconn);
+	require_once('stock_functions.php');
+	$ticker_sym = "AAPL";
+	$extrap = $_POST['extrap'];
 
-	$update = $_POST['updatedb'];
-	$graph = $_POST['graph'];
+	if (isset($extrap)){
+		# Before extrapolating tomorrow price udpate DB
+		updateDB($ticker_sym);
 
-	if (isset($update)){
-		#query db for last inserted date 
-		$sql = "SELECT closing_date FROM stocks WHERE ticker_symbol='AAPL' ORDER BY closing_date DESC LIMIT 1";
-		$result = mysql_query($sql, $dbconn) or die(var_dump(mysql_error()));
-		if(mysql_num_rows($result)) {
-			$startDate = mysql_fetch_row($result);
-		} else {
-			echo "No rows returned";
-		}
-
-		$modifydate = new DateTime($startDate[0]);
-		$modifydate->modify('+1 day');
-		$startDate= $modifydate->format('Y-m-d');
-
-		#query closing price up to the date for 'x' stock
-		# To-Do make yahoo api function	 
-		$ticker_sym = "AAPL";
-
-		# Format the current date for the query
-		date_default_timezone_set('UTC');
-		$currDate = date("c");
-		$endDate = explode("T", $currDate);
-
-		# setting up yahoo api call
-		$yahoo_base_api = "http://query.yahooapis.com/v1/public/yql";
-		$query = "select Close, Date from yahoo.finance.historicaldata where symbol='".$ticker_sym."' and startDate='".$startDate."' and endDate='".$endDate[0]."'";
-
-
-		$yql_query = $yahoo_base_api . "?q=" . urlencode($query);
-		$yql_query .= "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-
-
-		# TO-DO make curl Function	
-		$session = curl_init($yql_query);  
-		curl_setopt($session, CURLOPT_RETURNTRANSFER,true);      
-		$json = curl_exec($session);
-
-		$closePrices =  json_decode($json); 
-		
-		if(!is_null($closePrices->query->results)){
-			foreach ($closePrices->query->results->quote as $quote){
-				$price= $quote->Close;
-				$date = $quote->Date;
-				$sql = "INSERT INTO stocks VALUES ( \"$ticker_sym\", \"$price\", \"$date\")";
-				var_dump($sql);
-				if (!mysql_query($sql, $dbconn))
-				{
-					    die('Error: ' . mysql_error());
-				}
-				echo "record added for $date<br>";
-
-			}
-
-		} 
-	}
-	if (isset($graph)){
+		# preforms linear regression on the closing 
+		# prices of AAPL for the last 5 days of data
+		$prediction = predictor();
+		echo "<h1>$prediction</h1>";
 		
 	}
 ?>
@@ -85,8 +32,7 @@
 
 <body>
 	<FORM ACTION="sbbrg.php" method="post">
-		<INPUT TYPE="submit" name=updatedb id=updatedb VALUE="Update Database">
-		<INPUT TYPE="submit" name=graph id=graph VALUE="Graph Data">
+		<INPUT TYPE="submit" name=extrap id=extrap VALUE="Extrapolate Data">
 	</FORM>
 </body>
 </html>

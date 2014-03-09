@@ -1,13 +1,104 @@
 <?php
-function fitLine () {
+function updateDB($ticker_sym){
+	$dbconn = getDBConnection();
+
+	#query db for last inserted date 
+	$sql = "SELECT closing_date FROM stocks WHERE ticker_symbol='AAPL' ORDER BY closing_date DESC LIMIT 1";
+	$result = mysql_query($sql, $dbconn) or die(var_dump(mysql_error()));
+
+	if(mysql_num_rows($result)) {
+		$startDate = mysql_fetch_row($result);
+	} else {
+		echo "No rows returned";
+		# get the last 5 results
+
+	}
+	
+	# modify day to exclude the day that is already in the DB
+	$startDate = modifyDate($startDate, '+1 day');
+
+	# get today's date so the yahoo api knows when to stop
+	$endDate = getTodaysDate();
+
+	# API to yahoo finance using Yahoo Query Language
+	$yql_query = buildAPIQuery($ticker_sym, $startDate, $endDate);
+
+	# fetches and decodes api results
+	$closePrices = curlAndDecodeAPI($yql_query);
+
+	# insert updates Into DB
+	insertStockUpdates($closePrices, $ticker_sym, $dbconn);
+
+}
+
+function insertStockUpdates($closePrices, $ticker_sym, $dbconn) {
+
+	#loops over all new closing prices
+	if(!is_null($closePrices->query->results)){
+		foreach ($closePrices->query->results->quote as $quote){
+			$price= $quote->Close;
+			$date = $quote->Date;
+			$sql = "INSERT INTO stocks VALUES ( \"$ticker_sym\", \"$price\", \"$date\")";
+			var_dump($sql);
+			if (!mysql_query($sql, $dbconn))
+			{
+				die('Error: ' . mysql_error());
+			}
+			echo "record added for $date<br>";
+
+		}
+
+	}
+
+}
+
+function curlAndDecodeAPI($yql_query) {
+
+	$session = curl_init($yql_query);
+	curl_setopt($session, CURLOPT_RETURNTRANSFER,true);
+	$json = curl_exec($session);
+
+	$closePrices =  json_decode($json);
+
+
+}
+
+function buildAPIQuery($ticker_sym, $startDate, $endDate) {
+	# setting up yahoo api call
+	$yahoo_base_api = "http://query.yahooapis.com/v1/public/yql";
+	$query = "select Close, Date from yahoo.finance.historicaldata where symbol='".$ticker_sym."' and startDate='".$startDate."' and endDate='".$endDate[0]."'";
+
+
+	$yql_query = $yahoo_base_api . "?q=" . urlencode($query);
+	$yql_query .= "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+	return $yql_query;
+
+
+}
+
+function getTodaysDate(){
+	# Format the current date for the query
+	date_default_timezone_set('UTC');
+	$currDate = date("c");
+	return explode("T", $currDate);
+
+}
+
+function modifyDate($startDate, $modifier){
+	$modifydate = new DateTime($startDate[0]);
+	$modifydate->modify($modifier);
+	$startDate= $modifydate->format('Y-m-d');
+	return $startDate;
+
+}
+
+function fitLine ($dayInFuture, $slope, $intercept) {
+	return ($slope*(5+$dayInFuture)) + $intercept;
 
 }
 
 function solveIntercept($xMean, $yMean, $slope) {
 	$intercept = $yMean - ($slope * $xMean);
-
-	#var_dump($intercept);
-	
 	return $intercept;
 }
 
@@ -17,11 +108,9 @@ function predictor() {
 	$xMean = getXMean();
 	$yMean = getYMean($y);
 	$slope = getSlope($xMean, $x, $yMean, $y);
-	var_dump($slope);
 	$Yintercept = solveIntercept($xMean, $yMean, $slope);
-
-	
-	return 100;
+	$prediction = fitLine(1, $slope, $Yintercept);
+	return $prediction;
 }
 
 function getClosingPrices() {
