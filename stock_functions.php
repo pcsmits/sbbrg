@@ -39,7 +39,6 @@ function insertStockUpdates($closePrices, $ticker_sym, $dbconn) {
 			$price= $quote->Close;
 			$date = $quote->Date;
 			$sql = "INSERT INTO stocks VALUES ( \"$ticker_sym\", \"$price\", \"$date\")";
-			var_dump($sql);
 			if (!mysql_query($sql, $dbconn))
 			{
 				die('Error: ' . mysql_error());
