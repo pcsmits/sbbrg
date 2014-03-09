@@ -20,6 +20,8 @@
 	mysql_select_db($mysql_db, $dbconn);
 
 	$update = $_POST['updatedb'];
+	$graph = $_POST['graph'];
+
 	if (isset($update)){
 		#query db for last inserted date 
 		$sql = "SELECT closing_date FROM stocks WHERE ticker_symbol='AAPL' ORDER BY closing_date DESC LIMIT 1";
@@ -29,6 +31,10 @@
 		} else {
 			echo "No rows returned";
 		}
+
+		$modifydate = new DateTime($startDate[0]);
+		$modifydate->modify('+1 day');
+		$startDate= $modifydate->format('Y-m-d');
 
 		#query closing price up to the date for 'x' stock
 		# To-Do make yahoo api function	 
@@ -41,26 +47,38 @@
 
 		# setting up yahoo api call
 		$yahoo_base_api = "http://query.yahooapis.com/v1/public/yql";
-		$query = "select Close from yahoo.finance.historicaldata where symbol='".$ticker_sym."' and startDate='".$startDate[0]."' and endDate='".$endDate[0]."'";
+		$query = "select Close, Date from yahoo.finance.historicaldata where symbol='".$ticker_sym."' and startDate='".$startDate."' and endDate='".$endDate[0]."'";
 
-		var_dump($query);
 
 		$yql_query = $yahoo_base_api . "?q=" . urlencode($query);
 		$yql_query .= "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-
-		var_dump($yql_query);
 
 
 		# TO-DO make curl Function	
 		$session = curl_init($yql_query);  
 		curl_setopt($session, CURLOPT_RETURNTRANSFER,true);      
 		$json = curl_exec($session);
-		
-		$phpObj =  json_decode($json); 
-		var_dump($phpObj);
-		
 
+		$closePrices =  json_decode($json); 
+		
+		if(!is_null($closePrices->query->results)){
+			foreach ($closePrices->query->results->quote as $quote){
+				$price= $quote->Close;
+				$date = $quote->Date;
+				$sql = "INSERT INTO stocks VALUES ( \"$ticker_sym\", \"$price\", \"$date\")";
+				var_dump($sql);
+				if (!mysql_query($sql, $dbconn))
+				{
+					    die('Error: ' . mysql_error());
+				}
+				echo "record added for $date<br>";
 
+			}
+
+		} 
+	}
+	if (isset($graph)){
+		
 	}
 ?>
 
@@ -68,6 +86,7 @@
 <body>
 	<FORM ACTION="sbbrg.php" method="post">
 		<INPUT TYPE="submit" name=updatedb id=updatedb VALUE="Update Database">
+		<INPUT TYPE="submit" name=graph id=graph VALUE="Graph Data">
 	</FORM>
 </body>
 </html>
