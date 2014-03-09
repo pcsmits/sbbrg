@@ -7,11 +7,11 @@ function updateDB($ticker_sym){
 	$result = mysql_query($sql, $dbconn) or die(var_dump(mysql_error()));
 
 	if(mysql_num_rows($result)) {
-		$startDate = mysql_fetch_row($result);
+		$dateArray = mysql_fetch_row($result);
+		$startDate = $dateArray[0];
 	} else {
-		echo "No rows returned";
-		# get the last 5 results
-
+		# get the last 5 results 7 days ago should have exactly 5 results
+		$startDate = modifyDate(getTodaysDate(), '-1 week');
 	}
 	
 	# modify day to exclude the day that is already in the DB
@@ -59,14 +59,14 @@ function curlAndDecodeAPI($yql_query) {
 	$json = curl_exec($session);
 
 	$closePrices =  json_decode($json);
-
+	return $closePrices;
 
 }
 
 function buildAPIQuery($ticker_sym, $startDate, $endDate) {
 	# setting up yahoo api call
 	$yahoo_base_api = "http://query.yahooapis.com/v1/public/yql";
-	$query = "select Close, Date from yahoo.finance.historicaldata where symbol='".$ticker_sym."' and startDate='".$startDate."' and endDate='".$endDate[0]."'";
+	$query = "select Close, Date from yahoo.finance.historicaldata where symbol='".$ticker_sym."' and startDate='".$startDate."' and endDate='".$endDate."'";
 
 
 	$yql_query = $yahoo_base_api . "?q=" . urlencode($query);
@@ -80,14 +80,15 @@ function getTodaysDate(){
 	# Format the current date for the query
 	date_default_timezone_set('UTC');
 	$currDate = date("c");
-	return explode("T", $currDate);
+	$tmp = explode("T", $currDate);
+	return $tmp[0];
 
 }
 
 function modifyDate($startDate, $modifier){
-	$modifydate = new DateTime($startDate[0]);
+	$modifydate = new DateTime($startDate);
 	$modifydate->modify($modifier);
-	$startDate= $modifydate->format('Y-m-d');
+	$startDate = $modifydate->format('Y-m-d');
 	return $startDate;
 
 }

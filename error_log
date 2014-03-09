@@ -165,3 +165,58 @@ Stack trace:
 [09-Mar-2014 07:33:17] PHP Fatal error:  Call to undefined function  insertstockupdates() in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 36
 [09-Mar-2014 07:33:40] PHP Fatal error:  Call to undefined function  insertstockupdates() in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 33
 [09-Mar-2014 07:34:05] PHP Fatal error:  Call to undefined function  insertstockupdates() in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 30
+[09-Mar-2014 07:44:29] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 174
+[09-Mar-2014 07:46:03] PHP Fatal error:  Uncaught exception 'Exception' with message 'DateTime::__construct() [<a href='datetime.--construct'>datetime.--construct</a>]: Failed to parse time string (2) at position 0 (2): Unexpected character' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php:89
+Stack trace:
+#0 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(89): DateTime->__construct('2')
+#1 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(19): modifyDate('2014-03-02', '+1 day')
+#2 /home5/uwwiscus/public_html/tools/sbbrg/sbbrg.php(22): updateDB('AAPL')
+#3 {main}
+  thrown in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 89
+[09-Mar-2014 07:47:47] PHP Fatal error:  Uncaught exception 'Exception' with message 'DateTime::__construct() [<a href='datetime.--construct'>datetime.--construct</a>]: Failed to parse time string (2) at position 0 (2): Unexpected character' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php:95
+Stack trace:
+#0 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(95): DateTime->__construct('2')
+#1 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(20): modifyDate('2014-03-02', '+1 day')
+#2 /home5/uwwiscus/public_html/tools/sbbrg/sbbrg.php(22): updateDB('AAPL')
+#3 {main}
+  thrown in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 95
+[09-Mar-2014 07:49:00] PHP Fatal error:  Uncaught exception 'Exception' with message 'DateTime::__construct() [<a href='datetime.--construct'>datetime.--construct</a>]: Failed to parse time string (2) at position 0 (2): Unexpected character' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php:95
+Stack trace:
+#0 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(95): DateTime->__construct('2')
+#1 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(20): modifyDate('2014-03-02', '+1 day')
+#2 /home5/uwwiscus/public_html/tools/sbbrg/sbbrg.php(22): updateDB('AAPL')
+#3 {main}
+  thrown in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 95
+[09-Mar-2014 00:50:20] PHP Parse error:  syntax error, unexpected '[' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 10
+[09-Mar-2014 00:51:11] PHP Parse error:  syntax error, unexpected '[' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 10
+[09-Mar-2014 00:51:58] PHP Parse error:  syntax error, unexpected '[' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 11
+[09-Mar-2014 00:52:12] PHP Parse error:  syntax error, unexpected '[', expecting T_STRING or T_VARIABLE or '{' or '$' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 11
+[09-Mar-2014 07:53:03] PHP Fatal error:  Uncaught exception 'Exception' with message 'DateTime::__construct() expects parameter 1 to be string, array given' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php:97
+Stack trace:
+#0 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(97): DateTime->__construct(Array)
+#1 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(17): modifyDate(Array, '-1 week')
+#2 /home5/uwwiscus/public_html/tools/sbbrg/sbbrg.php(22): updateDB('AAPL')
+#3 {main}
+  thrown in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 97
+[09-Mar-2014 07:55:00] PHP Fatal error:  Uncaught exception 'Exception' with message 'DateTime::__construct() expects parameter 1 to be string, array given' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php:99
+Stack trace:
+#0 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(99): DateTime->__construct(Array)
+#1 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(17): modifyDate(Array, '-1 week')
+#2 /home5/uwwiscus/public_html/tools/sbbrg/sbbrg.php(22): updateDB('AAPL')
+#3 {main}
+  thrown in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 99
+[09-Mar-2014 08:00:12] PHP Fatal error:  Uncaught exception 'Exception' with message 'DateTime::__construct() expects parameter 1 to be string, array given' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php:100
+Stack trace:
+#0 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(100): DateTime->__construct(Array)
+#1 /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php(18): modifyDate(Array, '-1 week')
+#2 /home5/uwwiscus/public_html/tools/sbbrg/sbbrg.php(22): updateDB('AAPL')
+#3 {main}
+  thrown in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 100
+[09-Mar-2014 01:01:09] PHP Parse error:  syntax error, unexpected '[' in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 95
+[09-Mar-2014 08:02:16] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 185
+[09-Mar-2014 08:02:54] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 179
+[09-Mar-2014 08:03:06] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 177
+[09-Mar-2014 08:03:46] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 178
+[09-Mar-2014 08:05:47] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 178
+[09-Mar-2014 08:08:37] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 176
+[09-Mar-2014 08:09:27] PHP Warning:  Division by zero in /home5/uwwiscus/public_html/tools/sbbrg/stock_functions.php on line 177
