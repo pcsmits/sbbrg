@@ -12,6 +12,7 @@ function updateDB($ticker_sym){
 	} else {
 		# get the last 5 results 7 days ago should have exactly 5 results
 		$startDate = modifyDate(getTodaysDate(), '-1 week');
+		$startDate = modifyDate($startDate, '-1 day');
 	}
 	
 	# modify day to exclude the day that is already in the DB
@@ -35,8 +36,25 @@ function insertStockUpdates($closePrices, $ticker_sym, $dbconn) {
 
 	#loops over all new closing prices
 	if(!is_null($closePrices->query->results)){
-		foreach ($closePrices->query->results->quote as $quote){
-			$price= $quote->Close;
+		$quote = $closePrices->query->results->quote;
+		if(!is_object($quote)){
+
+			# if an array of objects iterate over objects
+			foreach ($quote as $vars){
+
+				$price = $vars->Close;
+				$date = $vars->Date;
+				$sql = "INSERT INTO stocks VALUES ( \"$ticker_sym\", \"$price\", \"$date\")";
+				if (!mysql_query($sql, $dbconn))
+				{
+					die('Error: ' . mysql_error());
+				}
+				echo "record added for $date<br>";
+			}
+		} else {
+
+			#if only one result (just grab result)
+			$price = $quote->Close;
 			$date = $quote->Date;
 			$sql = "INSERT INTO stocks VALUES ( \"$ticker_sym\", \"$price\", \"$date\")";
 			if (!mysql_query($sql, $dbconn))
@@ -44,12 +62,12 @@ function insertStockUpdates($closePrices, $ticker_sym, $dbconn) {
 				die('Error: ' . mysql_error());
 			}
 			echo "record added for $date<br>";
-
 		}
 
 	}
-
 }
+
+
 
 function curlAndDecodeAPI($yql_query) {
 
@@ -71,8 +89,6 @@ function buildAPIQuery($ticker_sym, $startDate, $endDate) {
 	$yql_query = $yahoo_base_api . "?q=" . urlencode($query);
 	$yql_query .= "&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 	return $yql_query;
-
-
 }
 
 function getTodaysDate(){
